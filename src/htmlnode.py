@@ -11,24 +11,26 @@ class HTMLNode():
     def props_to_html(self):
         if self.props == None:
             return ''
-        props_html = ' '.join(map(lambda a: f'"{a[0]}"="{a[1]}"',self.props.items()))
+        props_html = ' '.join(map(lambda a: f'{a[0]}="{a[1]}"',self.props.items()))
         return f" {props_html}"
     
     def __repr__(self):
-        textContent = None
-        if self.value == None and self.children == None:
-            textContent = ""
-        elif self.value == None:
-            textContent = self.children
-        else:
-            textContent = self.value
-        props = self.props_to_html()
+        return f"HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})"
+        # textContent = None
+        # if self.value == None and self.children == None:
+        #     textContent = ""
+        # elif self.value == None:
+        #     textContent = self.children
+        # else:
+        #     textContent = self.value
+        # props = self.props_to_html()
 
-        if self.tag == None:
-            return self.value
+        # if self.tag == None:
+        #     return self.value
 
-        return f"<{self.tag}{props}>{textContent}</{self.tag}>"
+        # return f"<{self.tag}{props}>{textContent}</{self.tag}>"
     
 # print(HTMLNode("p", None, None, {"style": "color: blue;"}))
 # print(HTMLNode("h1", "Hello World", None, {"style": "padding: 1rem;"}))
 # print(HTMLNode(None, "Just raw text", None, None))
+print(HTMLNode("a", "Boot.dev Dashboard", None, {"href": "https://www.boot.dev/dashboard", "target": "_blank"}).props_to_html())
