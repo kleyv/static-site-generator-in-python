@@ -16,19 +16,6 @@ class HTMLNode():
     
     def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})"
-        # textContent = None
-        # if self.value == None and self.children == None:
-        #     textContent = ""
-        # elif self.value == None:
-        #     textContent = self.children
-        # else:
-        #     textContent = self.value
-        # props = self.props_to_html()
-
-        # if self.tag == None:
-        #     return self.value
-
-        # return f"<{self.tag}{props}>{textContent}</{self.tag}>"
 
 
 class LeafNode(HTMLNode):
