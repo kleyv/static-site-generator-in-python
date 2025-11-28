@@ -6,7 +6,7 @@ class HTMLNode():
         self.props = props
 
     def to_html(self):
-        raise NotImplementedError
+        raise NotImplementedError("to_html method not implemented")
     
     def props_to_html(self):
         if self.props == None:
@@ -29,8 +29,37 @@ class HTMLNode():
         #     return self.value
 
         # return f"<{self.tag}{props}>{textContent}</{self.tag}>"
+
+
+class LeafNode(HTMLNode):
+    def __init__(self, tag, value, props=None):
+        super().__init__(tag, value, None, props)
+        if value == None:
+            raise ValueError("invalid HTML: no value")
     
+    def to_html(self):
+        if self.tag == None:
+            return self.value
+
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
+
+    def __repr__(self):
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
+
+
+
 # print(HTMLNode("p", None, None, {"style": "color: blue;"}))
 # print(HTMLNode("h1", "Hello World", None, {"style": "padding: 1rem;"}))
 # print(HTMLNode(None, "Just raw text", None, None))
-print(HTMLNode("a", "Boot.dev Dashboard", None, {"href": "https://www.boot.dev/dashboard", "target": "_blank"}).props_to_html())
+# print(HTMLNode("a", "Boot.dev Dashboard", None, {"href": "https://www.boot.dev/dashboard", "target": "_blank"}).props_to_html())
+
+# print(LeafNode("span", "Boot.dev Dashboard",{"href": "https://www.boot.dev/dashboard", "target": "_blank"}).to_html())
+# print(LeafNode(None, "Boot.dev Dashboard", {"href": "https://www.boot.dev/dashboard", "target": "_blank"}).to_html())
+# print(LeafNode(None, None, {"href": "https://www.boot.dev/dashboard", "target": "_blank"}).to_html())
+
+
+# print(LeafNode("p", "This is a paragraph of text.").to_html())
+# "<p>This is a paragraph of text.</p>"
+
+# print(LeafNode("a", "Click me!", {"href": "https://www.google.com"}).to_html())
+# "<a href="https://www.google.com">Click me!</a>"
