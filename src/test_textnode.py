@@ -1,6 +1,6 @@
 import unittest
 
-from textnode import TextNode, TextType
+from textnode import TextNode, TextType, text_node_to_html_node
 
 
 class TestTextNode(unittest.TestCase):
@@ -21,6 +21,19 @@ class TestTextNode(unittest.TestCase):
     def test_is_code(self):
         code_block = TextNode("`print('Hello, world!')`", TextType.CODE)
         self.assertStartsWith(code_block.text,'`')
+
+    def test_text(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+
+    def test_image(self):
+        image_node = TextNode("This is image description", TextType.IMAGE, "www.domain.com/image.jpg")
+        html_node = text_node_to_html_node(image_node)
+        self.assertEqual(html_node.tag, "img")
+        self.assertEqual(html_node.value, "")
+        self.assertEqual(html_node.props_to_html(), ' alt="This is image description" src="www.domain.com/image.jpg"')
 
 if __name__ == "__main__":
     unittest.main()
