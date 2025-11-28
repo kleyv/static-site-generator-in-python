@@ -21,10 +21,10 @@ class HTMLNode():
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
         super().__init__(tag, value, None, props)
-        if value == None:
-            raise ValueError("invalid HTML: no value")
     
     def to_html(self):
+        if self.value == None:
+            raise ValueError("invalid HTML: no value")
         if self.tag == None:
             return self.value
 
@@ -32,8 +32,18 @@ class LeafNode(HTMLNode):
 
     def __repr__(self):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
+    
+class ParentNode(HTMLNode):
+    def __init__(self, tag, children, props=None):
+        super().__init__(tag, None, children, props)
 
-
+    def to_html(self):
+        if self.tag == None:
+            raise ValueError("invalid HTML: no tag")
+        if self.children == None:
+            raise ValueError("invalid HTML: no children")
+        
+        return f"<{self.tag}{self.props_to_html()}>{''.join(map(lambda child: child.to_html(),self.children))}</{self.tag}>"
 
 # print(HTMLNode("p", None, None, {"style": "color: blue;"}))
 # print(HTMLNode("h1", "Hello World", None, {"style": "padding: 1rem;"}))
@@ -50,3 +60,16 @@ class LeafNode(HTMLNode):
 
 # print(LeafNode("a", "Click me!", {"href": "https://www.google.com"}).to_html())
 # "<a href="https://www.google.com">Click me!</a>"
+
+
+# node = ParentNode(
+#     "p",
+#     [
+#         LeafNode("b", "Bold text"),
+#         LeafNode(None, "Normal text"),
+#         LeafNode("i", "italic text"),
+#         LeafNode(None, "Normal text"),
+#     ],
+# )
+
+# print(node.to_html())
