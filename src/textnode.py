@@ -42,14 +42,13 @@ def text_node_to_html_node(text_node):
         case(TextType.IMAGE):
             return LeafNode("img", '',  {"alt": text_node.text, "src": text_node.url} )
         case _:
-            raise Exception("Unsuported!!")
-        
+            raise ValueError(f"invalid text type: {text_node.text_type}")
 
 # node = TextNode("This is a text node", TextType.TEXT)
 # html_node = text_node_to_html_node(node)
 # print(html_node.to_html())
 
 
-# image_node = TextNode("This is image description", TextType.IMAGE, "www.domain.com/image.jpg")
-# html_image_node = text_node_to_html_node(image_node)
-# print(html_image_node.to_html())
+image_node = TextNode("This is image description", TextType.IMAGE, "www.domain.com/image.jpg")
+html_image_node = text_node_to_html_node(image_node)
+print(html_image_node.to_html())
