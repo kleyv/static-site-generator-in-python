@@ -45,6 +45,9 @@ class ParentNode(HTMLNode):
         
         return f"<{self.tag}{self.props_to_html()}>{''.join(map(lambda child: child.to_html(),self.children))}</{self.tag}>"
 
+    def __repr__(self):
+        return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
+
 # print(HTMLNode("p", None, None, {"style": "color: blue;"}))
 # print(HTMLNode("h1", "Hello World", None, {"style": "padding: 1rem;"}))
 # print(HTMLNode(None, "Just raw text", None, None))
