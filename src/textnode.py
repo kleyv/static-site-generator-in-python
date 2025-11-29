@@ -49,6 +49,11 @@ def text_node_to_html_node(text_node):
 # print(html_node.to_html())
 
 
-image_node = TextNode("This is image description", TextType.IMAGE, "www.domain.com/image.jpg")
-html_image_node = text_node_to_html_node(image_node)
-print(html_image_node.to_html())
+# image_node = TextNode("This is image description", TextType.IMAGE, "www.domain.com/image.jpg")
+# html_image_node = text_node_to_html_node(image_node)
+# print(html_image_node.to_html())
+
+
+# code_node = TextNode("`print('Hello, world!')`", TextType.CODE)
+# html_code_node = text_node_to_html_node(code_node)
+# print(html_code_node.to_html())

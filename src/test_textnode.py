@@ -34,6 +34,12 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(html_node.tag, "img")
         self.assertEqual(html_node.value, "")
         self.assertEqual(html_node.props_to_html(), ' alt="This is image description" src="www.domain.com/image.jpg"')
+    
+    def test_code(self):
+        code_node = TextNode("`print('Hello, world!')`", TextType.CODE)
+        html_node = text_node_to_html_node(code_node)
+        self.assertEqual(html_node.tag, "code")
+        self.assertEqual(html_node.value, "`print('Hello, world!')`")
 
 if __name__ == "__main__":
     unittest.main()
