@@ -39,6 +39,70 @@ def extract_markdown_links(text):
         results.append((alt, url))
     return results
 
+def split_nodes_image(old_nodes):
+    pattern = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    new_nodes = []
+    for old_node in old_nodes:
+        chunks =re.split(pattern, old_node.text)
+        for index in range(len(chunks)):
+            if chunks[index] == "":
+                continue
+            is_raw_text = index % 3 == 0
+            is_image_alt = index % 3 == 1
+            if is_raw_text:
+                new_nodes.append(TextNode(chunks[index], TextType.TEXT))
+            if is_image_alt:
+                image_alt = chunks[index]
+                image_url = chunks[index + 1]
+                new_nodes.append(TextNode(image_alt, TextType.IMAGE, image_url ))
+
+    return new_nodes
+
+def split_nodes_link(old_nodes):
+    pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    new_nodes = []
+    for old_node in old_nodes:
+        chunks =re.split(pattern, old_node.text)
+        for index in range(len(chunks)):
+            if chunks[index] == "":
+                continue
+            is_raw_text = index % 3 == 0
+            is_link_text = index % 3 == 1
+            if is_raw_text:
+                new_nodes.append(TextNode(chunks[index], TextType.TEXT))
+            if is_link_text:
+                link_text = chunks[index]
+                link_url = chunks[index + 1]
+                new_nodes.append(TextNode(link_text, TextType.LINK, link_url ))
+
+    return new_nodes
+
+
+
+# link_node = TextNode(
+#     "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+#     TextType.TEXT,
+# )
+# new_link_nodes = split_nodes_link([link_node])
+# print(new_link_nodes)
+
+
+# image_node = TextNode(
+#     "This is text with an image ![image description](https://example.com/image.png) in it.",
+#     TextType.TEXT,
+# )
+# new_image_nodes = split_nodes_image([image_node])
+# print(new_image_nodes)
+
+
+# [
+#     TextNode("This is text with a link ", TextType.TEXT),
+#     TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+#     TextNode(" and ", TextType.TEXT),
+#     TextNode(
+#         "to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"
+#     ),
+# ]
 
 # node = TextNode("This is text with a `code block` word", TextType.TEXT)
 # new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)

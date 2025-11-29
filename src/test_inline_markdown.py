@@ -2,7 +2,10 @@ import unittest
 from inline_markdown import (
     split_nodes_delimiter,
     extract_markdown_images,
-    extract_markdown_links
+    extract_markdown_links,
+    split_nodes_image,
+    split_nodes_link
+
 )
 from textnode import TextNode, TextType
 class TestSplitNodes(unittest.TestCase):
@@ -89,6 +92,44 @@ class TestSplitNodes(unittest.TestCase):
         self.assertListEqual([
             ("First link", "https://firstlink.com/"),
             ("Second link", "https://secondlink.com/")], matches)
+        
+    def test_split_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            new_nodes,
+            [
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ]
+            
+        )
+    
+    def test_split_links(self):
+        link_node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([link_node])
+        self.assertListEqual(
+            new_nodes,
+            [
+                TextNode("This is text with a link ", TextType.TEXT),
+                TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode(
+                    "to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"
+                ),
+            ]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
