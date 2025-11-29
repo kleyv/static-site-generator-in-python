@@ -43,40 +43,75 @@ def split_nodes_image(old_nodes):
     pattern = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
     new_nodes = []
     for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT:
+            new_nodes.append(old_node)
+            continue
         chunks =re.split(pattern, old_node.text)
+        split_nodes = []
         for index in range(len(chunks)):
             if chunks[index] == "":
                 continue
             is_raw_text = index % 3 == 0
             is_image_alt = index % 3 == 1
             if is_raw_text:
-                new_nodes.append(TextNode(chunks[index], TextType.TEXT))
+                split_nodes.append(TextNode(chunks[index], TextType.TEXT))
             if is_image_alt:
                 image_alt = chunks[index]
                 image_url = chunks[index + 1]
-                new_nodes.append(TextNode(image_alt, TextType.IMAGE, image_url ))
-
+                split_nodes.append(TextNode(image_alt, TextType.IMAGE, image_url ))
+        new_nodes.extend(split_nodes)
     return new_nodes
 
 def split_nodes_link(old_nodes):
     pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
     new_nodes = []
     for old_node in old_nodes:
-        chunks =re.split(pattern, old_node.text)
+        if old_node.text_type != TextType.TEXT:
+            new_nodes.append(old_node)
+            continue
+        chunks = re.split(pattern, old_node.text)
+        split_nodes = []
         for index in range(len(chunks)):
             if chunks[index] == "":
                 continue
             is_raw_text = index % 3 == 0
             is_link_text = index % 3 == 1
             if is_raw_text:
-                new_nodes.append(TextNode(chunks[index], TextType.TEXT))
+                split_nodes.append(TextNode(chunks[index], TextType.TEXT))
             if is_link_text:
                 link_text = chunks[index]
                 link_url = chunks[index + 1]
-                new_nodes.append(TextNode(link_text, TextType.LINK, link_url ))
-
+                split_nodes.append(TextNode(link_text, TextType.LINK, link_url ))
+        new_nodes.extend(split_nodes)
     return new_nodes
 
+
+def text_to_textnodes(text):
+    text_node = TextNode(text, TextType.TEXT)
+    filtered_image_nodes = split_nodes_image([text_node])
+    filtered_link_nodes = split_nodes_link(filtered_image_nodes)
+    filtered_bold_nodes = split_nodes_delimiter(filtered_link_nodes, "**", TextType.BOLD)
+    filtered_italic_nodes = split_nodes_delimiter(filtered_bold_nodes, "_", TextType.ITALIC)
+    filtered_code_nodes = split_nodes_delimiter(filtered_italic_nodes, "`", TextType.CODE)
+    return filtered_code_nodes
+
+sentence = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+
+print(text_to_textnodes(sentence))
+"""
+[
+    TextNode(This is , text, None), 
+    TextNode(text, bold, None), 
+    TextNode( with an , text, None), 
+    TextNode(italic, italic, None), 
+    TextNode( word and a , text, None), 
+    TextNode(code block, code, None), 
+    TextNode( and an , text, None), 
+    TextNode(obi wan image, image, https://i.imgur.com/fJRm4Vk.jpeg), 
+    TextNode( and a , text, None), 
+    TextNode(link, link, https://boot.dev)
+]
+"""
 
 
 # link_node = TextNode(
@@ -126,4 +161,3 @@ def split_nodes_link(old_nodes):
 # text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
 # print(extract_markdown_links(text))
 # # [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
-
