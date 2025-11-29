@@ -1,5 +1,9 @@
 import unittest
-from inline_markdown import split_nodes_delimiter
+from inline_markdown import (
+    split_nodes_delimiter,
+    extract_markdown_images,
+    extract_markdown_links
+)
 from textnode import TextNode, TextType
 class TestSplitNodes(unittest.TestCase):
     def test_missing_closing_delimiter(self):
@@ -62,6 +66,29 @@ class TestSplitNodes(unittest.TestCase):
             ],
             new_nodes,
         )
+
+
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "You may be using [Markdown Live Preview](https://markdownlivepreview.com/)"
+        )
+        self.assertListEqual([("Markdown Live Preview", "https://markdownlivepreview.com/")], matches)
+
+
+    def test_extract_markdown_multiple_links(self):
+        matches = extract_markdown_links(
+            "[First link](https://firstlink.com/) and [Second link](https://secondlink.com/)"
+        )
+        self.assertListEqual([
+            ("First link", "https://firstlink.com/"),
+            ("Second link", "https://secondlink.com/")], matches)
 
 if __name__ == "__main__":
     unittest.main()
