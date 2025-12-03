@@ -18,19 +18,11 @@ def markdown_to_html_node(markdown):
         block_type = block_to_block_type(block)
         match(block_type):
             case(BlockType.HEADING):
-                value = re.split(r"(^#{1,6}\s)", block)[-1]
-                if block.startswith('######'):
-                    children.append(LeafNode('h6', value))
-                elif block.startswith('#####'):
-                    children.append(LeafNode('h5', value))
-                elif block.startswith('####'):
-                    children.append(LeafNode('h4', value))
-                elif block.startswith('###'):
-                    children.append(LeafNode('h3', value))
-                elif block.startswith('##'):
-                    children.append(LeafNode('h2', value))
-                elif block.startswith('#'):
-                    children.append(LeafNode('h1', value))
+                spilt_line = re.split(r"(^#{1,6}\s)", block)
+                heading = spilt_line[1].strip()
+                heading_number = f"h{len(heading)}"
+                text = spilt_line[-1]
+                children.append(LeafNode(heading_number, text))
             case(BlockType.CODE):
                 # value = block.strip("```")
                 split_lines = block.split('\n')
@@ -104,6 +96,15 @@ def main():
 # tag here
 
 # This is another paragraph with _italic_ text and `code` here
+
+# """
+#         node = markdown_to_html_node(md)
+#         html = node.to_html()
+#         print(html)
+#         md = """
+# # This is a Heading h1
+
+# ###### This is a Heading h6
 
 # """
 #         node = markdown_to_html_node(md)
