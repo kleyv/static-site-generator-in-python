@@ -1,10 +1,5 @@
 from enum import Enum
 import re
-from block_markdown import (
-    markdown_to_blocks, 
-    block_to_block_type,
-    BlockType
-)
 from htmlnode import (
     ParentNode,
     LeafNode
