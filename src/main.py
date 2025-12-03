@@ -1,59 +1,31 @@
+import os
+import shutil
 
+def recursive_copy(source_directory_path,destination_directory_path):
+    print(f"copying from: {source_directory_path}\n to: {destination_directory_path}")
+    if os.path.exists(destination_directory_path):
+        shutil.rmtree(destination_directory_path)
+    os.mkdir(destination_directory_path)
+
+    source_diretory_paths = os.listdir(source_directory_path)
+    for source_path in source_diretory_paths:
+        full_source_path = os.path.join(source_directory_path, source_path)
+        if os.path.isfile(full_source_path):
+            shutil.copy(full_source_path, destination_directory_path)
+        if os.path.isdir(full_source_path):
+            new_destination_directory_path = os.path.join(destination_directory_path, source_path)
+            recursive_copy(full_source_path, new_destination_directory_path)
+
+def copy_to_destination():
+    source = "static"
+    destination = "public"
+    root = os.path.abspath('.')
+    source_directory_path = os.path.join(root, source)
+    destination_directory_path = os.path.join(root, destination)
+
+    recursive_copy(source_directory_path, destination_directory_path)
 
 def main():
-    # new_node = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
-    # print(new_node)
-    # markdown = "# heading one"
-    # print(markdown_to_html_node(markdown))
-#     md = """
-# ```
-# This is text that _should_ remain
-# the **same** even with inline stuff
-# ```
-# """
-#     node = markdown_to_html_node(md)
-#     html = node.to_html()
-#     print(html)
-#         md = """
-# - Item 1
-# - Item 2
-# - Item 2a
-# - Item 2b
-# """
-#         node = markdown_to_html_node(md)
-#         html = node.to_html()
-#         print(html)
-#         md = """
-# 1. Item 1
-# 2. Item 2
-# 3. Item 3
-# """
-#         node = markdown_to_html_node(md)
-#         html = node.to_html()
-#         print(html)
-#         md = """
-# This is **bolded** paragraph
-# text in a p
-# tag here
-
-# This is another paragraph with _italic_ text and `code` here
-
-# """
-#         node = markdown_to_html_node(md)
-#         html = node.to_html()
-#         print(html)
-#         md = """
-# # This is a Heading h1
-
-# ###### This is a Heading h6
-
-# """
-#         node = markdown_to_html_node(md)
-#         html = node.to_html()
-#         print(html)
-    pass
-
-
-
+    copy_to_destination()
 
 main()
