@@ -81,8 +81,10 @@ def markdown_to_html_node(markdown):
                 spilt_line = re.split(r"(^#{1,6}\s)", block)
                 heading = spilt_line[1].strip()
                 heading_number = f"h{len(heading)}"
-                text = spilt_line[-1]
-                children.append(LeafNode(heading_number, text))
+                line = spilt_line[-1]
+                text_nodes = text_to_textnodes(line)
+                html_nodes = list(map(lambda text_node: text_node_to_html_node(text_node),text_nodes))
+                children.append(ParentNode(heading_number,html_nodes))
             case(BlockType.CODE):
                 # value = block.strip("```")
                 split_lines = block.split('\n')
@@ -91,22 +93,37 @@ def markdown_to_html_node(markdown):
                 children.append(ParentNode('pre',[code_leaf_node]))
             case(BlockType.QUOTE):
                 lines = block.split('\n')
-                paragraphs = list(
-                    map(
-                        lambda line: LeafNode('p', line.strip('> ')),lines
-                    )
-                )
-                children.append(ParentNode('blockquote',paragraphs))
+                # paragraphs = list(
+                #     map(
+                #         lambda line: LeafNode('p', line.strip('> ')),lines
+                #     )
+                # )
+                stripped_quote = ' '.join(map(lambda line: line.strip('> '), lines))
+                # text_nodes_list = list(map(lambda line: text_to_textnodes(line.strip('> ')),lines))
+                text_nodes = text_to_textnodes(stripped_quote)
+                html_nodes = list(map(lambda text_node: text_node_to_html_node(text_node) ,text_nodes))
+                children.append(ParentNode('blockquote', html_nodes))
+                    # paragraphs.append(ParentNode('p', html_nodes))
             case(BlockType.UNORDERED_LIST):
                 lines = block.split('\n')
-                list_items = list(map(lambda line: LeafNode('li', line.strip('- ')),lines))
+                # text_to_children = lambda line: text_to_textnodes(line)
+                text_nodes_list = list(map(lambda line: text_to_textnodes(line.strip('- ')),lines))
+                list_items = []
+                for text_nodes in text_nodes_list:
+                    html_nodes = list(map(lambda text_node: text_node_to_html_node(text_node), text_nodes))
+                    list_items.append(ParentNode('li', html_nodes))
+
                 children.append(ParentNode('ul', list_items))
             case(BlockType.ORDERED_LIST):
                 lines = block.split('\n')
                 strip_digits = lambda line: re.split(r"(^\d\.\s)", line)[-1]
-                list_items = list(
-                    map(lambda line: LeafNode('li', strip_digits(line)), lines))
+                text_nodes_list = list(map(lambda line: text_to_textnodes(strip_digits(line)), lines))
+                list_items = []
+                for text_nodes in text_nodes_list:
+                    html_nodes = list(map(lambda text_node: text_node_to_html_node(text_node), text_nodes))
+                    list_items.append(ParentNode('li', html_nodes))
                 children.append(ParentNode('ol', list_items))
+
             case(BlockType.PARAGRAPH):
                 text = ' '.join(block.split('\n'))
                 text_nodes = text_to_textnodes(text)

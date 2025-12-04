@@ -106,14 +106,18 @@ the **same** even with inline stuff
 
     def test_blockquote(self):
         md = """
-> For 60 years, WWF has worked to help people and nature thrive.
-> As the world's leading conservation organization, WWF works in nearly 100 countries.
+> This is a
+> blockquote block
+
+this is paragraph text
+
 """
+
         node = markdown_to_html_node(md)
         html = node.to_html()
         self.assertEqual(
             html,
-            "<div><blockquote><p>For 60 years, WWF has worked to help people and nature thrive.</p><p>As the world's leading conservation organization, WWF works in nearly 100 countries.</p></blockquote></div>"
+            "<div><blockquote>This is a blockquote block</blockquote><p>this is paragraph text</p></div>",
         )
 
     def test_unordered_list(self):
@@ -173,7 +177,29 @@ This is another paragraph with _italic_ text and `code` here
             "<div><h1>This is a Heading h1</h1><h6>This is a Heading h6</h6></div>",
         )
 
+    def test_italic_in_list_item(self):
+        md = """
+- Disney _didn't ruin it_ (okay, but Amazon might have)
+- It created an entirely new genre of fantasy
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ul><li>Disney <i>didn't ruin it</i> (okay, but Amazon might have)</li><li>It created an entirely new genre of fantasy</li></ul></div>",
+        )
 
+    def test_bold_in_list_item(self):
+        md = """
+1. Disney **didn't ruin it** (okay, but Amazon might have)
+2. It created an entirely new genre of fantasy
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ol><li>Disney <b>didn't ruin it</b> (okay, but Amazon might have)</li><li>It created an entirely new genre of fantasy</li></ol></div>",
+        )
 
 if __name__ == "__main__":
     unittest.main()
