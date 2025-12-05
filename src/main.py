@@ -1,10 +1,12 @@
 from copy_static import recursive_copy
-from generate_page import generate_page
+from generate_page import generate_page, generate_pages_recursively
 import os
 import shutil
 
 dir_path_static = "./static"
 dir_path_public = "./public"
+dir_path_content = "./content"
+template_path = "./template.html"
 
 def main():
     print("Deleting public directory...")
@@ -15,6 +17,9 @@ def main():
     recursive_copy(dir_path_static, dir_path_public)
 
     print("Writing to static files to public directory...")
-    generate_page('./content/index.md', './template.html', './public/index.html')
-
+    generate_pages_recursively(
+        os.path.join(dir_path_content),
+        template_path,
+        os.path.join(dir_path_public)
+    )
 main()

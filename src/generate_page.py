@@ -51,7 +51,23 @@ def generate_page(from_path, template_path, dest_path):
     updated_template = template_content.replace("{{ Title }}", title)
     updated_template = updated_template.replace("{{ Content }}", html)
     write_file_content(dest_path, updated_template)
-    print(html[:10])
+
+def generate_pages_recursively(from_path, template_path, dest_path):
+    if not os.path.exists(os.path.dirname(dest_path)):
+        os.mkdir(os.path.dirname(dest_path))
+    
+    print(f"Creating {dest_path} from {from_path}")
+    source_directory_paths = os.listdir(from_path)
+    for filename in source_directory_paths:
+        full_source_path = os.path.join(from_path, filename)
+
+        if os.path.isfile(full_source_path):
+            html_filename = filename.replace(".md", ".html")
+            full_destination_path = os.path.join(dest_path, html_filename)
+            generate_page(full_source_path, template_path, full_destination_path)
+        else:
+            full_destination_path = os.path.join(dest_path, filename)
+            generate_pages_recursively(full_source_path, template_path, full_destination_path)
 
 
 # print(extract_title("# Tolkien Fan Club"))
