@@ -41,7 +41,7 @@ def write_file_content(file_path, content):
         return f"Error: {e}"
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
     markdown_content = read_file_content(from_path)
@@ -50,9 +50,11 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(markdown_content)
     updated_template = template_content.replace("{{ Title }}", title)
     updated_template = updated_template.replace("{{ Content }}", html)
+    updated_template = updated_template.replace('href="/', f'href="{basepath}')
+    updated_template = updated_template.replace('src="/', f'src="{basepath}')
     write_file_content(dest_path, updated_template)
 
-def generate_pages_recursively(from_path, template_path, dest_path):
+def generate_pages_recursively(from_path, template_path, dest_path, basepath):
     if not os.path.exists(os.path.dirname(dest_path)):
         os.mkdir(os.path.dirname(dest_path))
     
@@ -64,10 +66,10 @@ def generate_pages_recursively(from_path, template_path, dest_path):
         if os.path.isfile(full_source_path):
             html_filename = filename.replace(".md", ".html")
             full_destination_path = os.path.join(dest_path, html_filename)
-            generate_page(full_source_path, template_path, full_destination_path)
+            generate_page(full_source_path, template_path, full_destination_path, basepath)
         else:
             full_destination_path = os.path.join(dest_path, filename)
-            generate_pages_recursively(full_source_path, template_path, full_destination_path)
+            generate_pages_recursively(full_source_path, template_path, full_destination_path, basepath)
 
 
 # print(extract_title("# Tolkien Fan Club"))
